@@ -1,4 +1,36 @@
-# Homeowners Insurance AI - Development Task List
+## How to Test Task 2.10
+
+To test task 2.10, follow these steps:
+
+1. **Review Task 2.10 Requirements**
+   - Refer to the task list and documentation to understand the specific requirements and expected behavior for task 2.10.
+
+2. **Set Up the Test Environment**
+   - Ensure your development environment is up to date.
+   - Run `npm install` (or `yarn install`) in both the backend and frontend directories if dependencies have changed.
+   - Start the backend and frontend servers.
+
+3. **Identify Relevant Files and Components**
+   - Locate the files and modules that were modified or created as part of task 2.10.
+
+4. **Manual Testing**
+   - Interact with the application UI or API endpoints related to task 2.10.
+   - Verify that the new or updated functionality works as described in the task.
+   - Check for correct handling of edge cases and error conditions.
+
+5. **Automated Testing**
+   - Run the relevant unit and integration tests:
+     - For backend: `npm run test` or `yarn test` in the backend directory.
+     - For frontend: `npm run test` or `yarn test` in the frontend directory.
+   - Ensure all tests pass and that there are tests covering the changes from task 2.10.
+
+6. **Code Review**
+   - Review the code changes for task 2.10 to ensure they follow project conventions and best practices.
+
+7. **Acceptance Criteria**
+   - Confirm that all acceptance criteria for task 2.10 are met.
+
+If you need more specific instructions, please provide the description or context of task 2.10.
 
 ## Project Overview
 This task list covers the complete implementation of the homeowners-insurance-ai project, a React + Node.js application for AI-powered inventory management and insurance analysis.

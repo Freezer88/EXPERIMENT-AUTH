@@ -36,7 +36,7 @@ const SignupPage: React.FC = () => {
     <SignupForm
       onSubmit={handleSignup}
       isLoading={isLoading || isSubmitting}
-      error={error}
+      error={error || undefined}
       onLogin={handleLogin}
     />
   );

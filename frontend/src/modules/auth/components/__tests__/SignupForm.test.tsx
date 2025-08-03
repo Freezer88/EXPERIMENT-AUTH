@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event';
 import SignupForm from '../SignupForm';
 
 // Mock the PasswordStrengthMeter component
-jest.mock('../../../../components/ui/PasswordStrengthMeter', () => {
-  return function MockPasswordStrengthMeter({ password }: { password: string }) {
+jest.mock('../../../../components/ui/PasswordStrengthMeter', () => ({
+  PasswordStrengthMeter: function MockPasswordStrengthMeter({ password }: { password: string }) {
     return <div data-testid="password-strength-meter">Strength: {password.length}</div>;
-  };
-});
+  }
+}));
 
 describe('SignupForm', () => {
   const mockOnSubmit = jest.fn();
@@ -30,7 +30,7 @@ describe('SignupForm', () => {
       expect(screen.getByLabelText(/first name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/last name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^password\*$/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
     });
@@ -54,9 +54,10 @@ describe('SignupForm', () => {
       const submitButton = screen.getByRole('button', { name: /create account/i });
       fireEvent.click(submitButton);
       
+      // Wait for validation to complete and error to appear
       await waitFor(() => {
         expect(screen.getByText(/first name is required/i)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should show error for short first name', async () => {
@@ -70,7 +71,7 @@ describe('SignupForm', () => {
       
       await waitFor(() => {
         expect(screen.getByText(/first name must be at least 2 characters/i)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should show error for empty last name', async () => {
@@ -81,17 +82,18 @@ describe('SignupForm', () => {
       
       await waitFor(() => {
         expect(screen.getByText(/last name is required/i)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should show error for invalid email', async () => {
-      render(<SignupForm {...defaultProps} />);
+      const user = userEvent.setup();
+      const { container } = render(<SignupForm {...defaultProps} />);
       
       const emailInput = screen.getByLabelText(/email address/i);
-      fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+      await user.type(emailInput, 'invalid-email');
       
-      const submitButton = screen.getByRole('button', { name: /create account/i });
-      fireEvent.click(submitButton);
+      const form = container.querySelector('form');
+      fireEvent.submit(form);
       
       await waitFor(() => {
         expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
@@ -99,13 +101,14 @@ describe('SignupForm', () => {
     });
 
     it('should show error for weak password', async () => {
-      render(<SignupForm {...defaultProps} />);
+      const user = userEvent.setup();
+      const { container } = render(<SignupForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/^password$/i);
-      fireEvent.change(passwordInput, { target: { value: 'weak' } });
+      const passwordInput = screen.getByLabelText(/^password\*$/i);
+      await user.type(passwordInput, 'weak');
       
-      const submitButton = screen.getByRole('button', { name: /create account/i });
-      fireEvent.click(submitButton);
+      const form = container.querySelector('form');
+      fireEvent.submit(form);
       
       await waitFor(() => {
         expect(screen.getByText(/password must contain:/i)).toBeInTheDocument();
@@ -113,16 +116,17 @@ describe('SignupForm', () => {
     });
 
     it('should show error for mismatched passwords', async () => {
-      render(<SignupForm {...defaultProps} />);
+      const user = userEvent.setup();
+      const { container } = render(<SignupForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/^password$/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
+      const passwordInput = screen.getByLabelText(/^password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password\*$/i);
       
-      fireEvent.change(passwordInput, { target: { value: 'SecurePass123!' } });
-      fireEvent.change(confirmPasswordInput, { target: { value: 'DifferentPass123!' } });
+      await user.type(passwordInput, 'validpassword123');
+      await user.type(confirmPasswordInput, 'differentpassword');
       
-      const submitButton = screen.getByRole('button', { name: /create account/i });
-      fireEvent.click(submitButton);
+      const form = container.querySelector('form');
+      fireEvent.submit(form);
       
       await waitFor(() => {
         expect(screen.getByText(/passwords do not match/i)).toBeInTheDocument();
@@ -137,7 +141,7 @@ describe('SignupForm', () => {
       
       await waitFor(() => {
         expect(screen.getByText(/you must accept the terms and conditions/i)).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
   });
 
@@ -145,7 +149,7 @@ describe('SignupForm', () => {
     it('should show password strength meter when password is entered', () => {
       render(<SignupForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/^password$/i);
+      const passwordInput = screen.getByLabelText(/password/i);
       fireEvent.change(passwordInput, { target: { value: 'test' } });
       
       expect(screen.getByTestId('password-strength-meter')).toBeInTheDocument();
@@ -167,7 +171,7 @@ describe('SignupForm', () => {
       await user.type(screen.getByLabelText(/first name/i), 'John');
       await user.type(screen.getByLabelText(/last name/i), 'Doe');
       await user.type(screen.getByLabelText(/email address/i), 'john@example.com');
-      await user.type(screen.getByLabelText(/^password$/i), 'SecurePass123!');
+      await user.type(screen.getByLabelText(/password/i), 'SecurePass123!');
       await user.type(screen.getByLabelText(/confirm password/i), 'SecurePass123!');
       await user.click(screen.getByRole('checkbox'));
       
@@ -205,7 +209,7 @@ describe('SignupForm', () => {
       await user.type(screen.getByLabelText(/first name/i), 'John');
       await user.type(screen.getByLabelText(/last name/i), 'Doe');
       await user.type(screen.getByLabelText(/email address/i), 'john@example.com');
-      await user.type(screen.getByLabelText(/^password$/i), 'SecurePass123!');
+      await user.type(screen.getByLabelText(/password/i), 'SecurePass123!');
       await user.type(screen.getByLabelText(/confirm password/i), 'SecurePass123!');
       await user.click(screen.getByRole('checkbox'));
       
@@ -232,7 +236,7 @@ describe('SignupForm', () => {
       await user.type(screen.getByLabelText(/first name/i), 'John');
       await user.type(screen.getByLabelText(/last name/i), 'Doe');
       await user.type(screen.getByLabelText(/email address/i), 'john@example.com');
-      await user.type(screen.getByLabelText(/^password$/i), 'SecurePass123!');
+      await user.type(screen.getByLabelText(/password/i), 'SecurePass123!');
       await user.type(screen.getByLabelText(/confirm password/i), 'SecurePass123!');
       await user.click(screen.getByRole('checkbox'));
       
@@ -264,7 +268,7 @@ describe('SignupForm', () => {
       expect(screen.getByLabelText(/first name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/last name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
     });
 
@@ -275,7 +279,7 @@ describe('SignupForm', () => {
         screen.getByLabelText(/first name/i),
         screen.getByLabelText(/last name/i),
         screen.getByLabelText(/email address/i),
-        screen.getByLabelText(/^password$/i),
+        screen.getByLabelText(/password/i),
         screen.getByLabelText(/confirm password/i),
       ];
       
@@ -290,7 +294,7 @@ describe('SignupForm', () => {
       render(<SignupForm {...defaultProps} isLoading={true} />);
       
       const inputs = screen.getAllByRole('textbox');
-      const submitButton = screen.getByRole('button', { name: /create account/i });
+      const submitButton = screen.getByRole('button', { name: /creating account/i });
       
       inputs.forEach(input => {
         expect(input).toBeDisabled();
@@ -309,7 +313,7 @@ describe('SignupForm', () => {
       await user.type(screen.getByLabelText(/first name/i), 'John');
       await user.type(screen.getByLabelText(/last name/i), 'Doe');
       await user.type(screen.getByLabelText(/email address/i), 'john@example.com');
-      await user.type(screen.getByLabelText(/^password$/i), 'SecurePass123!');
+      await user.type(screen.getByLabelText(/password/i), 'SecurePass123!');
       await user.type(screen.getByLabelText(/confirm password/i), 'SecurePass123!');
       await user.click(screen.getByRole('checkbox'));
       

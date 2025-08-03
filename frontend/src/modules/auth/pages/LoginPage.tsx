@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
     <LoginForm
       onSubmit={handleLogin}
       isLoading={isLoading || isSubmitting}
-      error={error}
+      error={error || undefined}
       onForgotPassword={handleForgotPassword}
       onSignup={handleSignup}
     />
