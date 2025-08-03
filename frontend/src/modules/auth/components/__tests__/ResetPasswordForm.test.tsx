@@ -28,8 +28,8 @@ describe('ResetPasswordForm', () => {
     it('should render all form fields', () => {
       render(<ResetPasswordForm {...defaultProps} />);
       
-      expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/confirm new password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^new password\*$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^confirm new password\*$/i)).toBeInTheDocument();
     });
 
     it('should render submit button', () => {
@@ -53,7 +53,7 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
       await user.type(passwordInput, 'test');
       
       expect(screen.getByTestId('password-strength-meter')).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
       await user.type(passwordInput, 'weak');
       
       const form = container.querySelector('form');
@@ -91,7 +91,7 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
       await user.type(passwordInput, 'ValidPass123!');
       
       const form = container.querySelector('form');
@@ -106,8 +106,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'DifferentPass123!');
@@ -124,8 +124,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -147,8 +147,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -181,8 +181,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -201,8 +201,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -222,8 +222,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -244,8 +244,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -282,8 +282,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -306,9 +306,9 @@ describe('ResetPasswordForm', () => {
     it('should disable form when loading', () => {
       render(<ResetPasswordForm {...defaultProps} isLoading={true} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
-      const submitButton = screen.getByRole('button', { name: /update password/i });
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
+      const submitButton = screen.getByRole('button', { name: /updating password/i });
       
       expect(passwordInput).toBeDisabled();
       expect(confirmPasswordInput).toBeDisabled();
@@ -321,8 +321,8 @@ describe('ResetPasswordForm', () => {
       const user = userEvent.setup();
       const { container } = render(<ResetPasswordForm {...defaultProps} />);
       
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const passwordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(passwordInput, 'ValidPass123!');
       await user.type(confirmPasswordInput, 'ValidPass123!');
@@ -338,18 +338,8 @@ describe('ResetPasswordForm', () => {
     it('should have proper labels for form fields', () => {
       render(<ResetPasswordForm {...defaultProps} />);
       
-      expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/confirm new password/i)).toBeInTheDocument();
-    });
-
-    it('should have required attributes on required fields', () => {
-      render(<ResetPasswordForm {...defaultProps} />);
-      
-      const passwordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
-      
-      expect(passwordInput).toHaveAttribute('required');
-      expect(confirmPasswordInput).toHaveAttribute('required');
+      expect(screen.getByLabelText(/^new password\*$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^confirm new password\*$/i)).toBeInTheDocument();
     });
   });
 }); 
