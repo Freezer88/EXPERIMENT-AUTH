@@ -7,8 +7,8 @@ const checkboxVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-secondary-300 bg-white text-white focus-visible:ring-primary-500 hover:border-primary-400 data-[state=checked]:bg-primary-600 data-[state=checked]:border-primary-600',
-        error: 'border-error-300 bg-white text-white focus-visible:ring-error-500 hover:border-error-400 data-[state=checked]:bg-error-600 data-[state=checked]:border-error-600',
+        default: 'border-secondary-300 bg-white text-white focus-visible:ring-primary-500 hover:border-primary-400',
+        error: 'border-error-300 bg-white text-white focus-visible:ring-error-500 hover:border-error-400',
       },
       size: {
         sm: 'h-3 w-3',
@@ -42,6 +42,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     helperText, 
     containerClassName, 
     id, 
+    checked,
     ...props 
   }, ref) => {
     const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
@@ -55,6 +56,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               type="checkbox"
               className="peer sr-only"
               ref={ref}
+              checked={checked}
               aria-invalid={error ? 'true' : 'false'}
               aria-describedby={error ? `${checkboxId}-error` : helperText ? `${checkboxId}-helper` : undefined}
               {...props}
@@ -63,20 +65,23 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               htmlFor={checkboxId}
               className={clsx(
                 checkboxVariants({ variant: error ? 'error' : variant, size, className }),
-                'peer-checked:data-[state=checked]'
+                checked ? 'bg-white border-primary-600' : 'bg-white border-secondary-300'
               )}
             >
               <svg
-                className="h-3 w-3 opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                className={clsx(
+                  "h-3 w-3 transition-opacity duration-200 text-black",
+                  checked ? 'opacity-100' : 'opacity-0'
+                )}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                strokeWidth="2"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={3}
-                  d="M5 13l4 4L19 7"
+                  d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
             </label>

@@ -25,4 +25,6 @@ module.exports = {
   verbose: true,
   clearMocks: true,
   restoreMocks: true,
+  // Enable console output
+  silent: false,
 }; 

@@ -534,9 +534,12 @@ describe('UserController', () => {
   });
 
   describe('POST /users/reset-password', () => {
-    let resetToken: string;
-
     beforeEach(async () => {
+      // Clear users before each test
+      userService.clearUsers();
+    });
+
+    const generateResetToken = async (): Promise<string> => {
       // Register a user and request password reset to get a token
       const userData = {
         email: 'test@example.com',
@@ -562,13 +565,15 @@ describe('UserController', () => {
       if (!user || !user.passwordResetToken) {
         throw new Error('Reset token not generated');
       }
-      resetToken = user.passwordResetToken;
-    });
+      return user.passwordResetToken;
+    };
 
     it('should reset password successfully with valid token', async () => {
+      const resetToken = await generateResetToken();
       const resetData = {
         token: resetToken,
         password: 'NewStrongPass456!',
+        confirmPassword: 'NewStrongPass456!',
       };
 
       const response = await request(app)
@@ -595,6 +600,7 @@ describe('UserController', () => {
     });
 
     it('should return 400 for weak new password', async () => {
+      const resetToken = await generateResetToken();
       const resetData = {
         token: resetToken,
         password: 'weak',
@@ -610,21 +616,24 @@ describe('UserController', () => {
     });
 
     it('should return 400 for mismatched passwords', async () => {
+      const resetToken = await generateResetToken();
       const resetData = {
         token: resetToken,
         password: 'NewStrongPass456!',
-        // Note: The controller only expects 'password', not confirmNewPassword
+        confirmPassword: 'DifferentPassword789!',
       };
 
       const response = await request(app)
         .post('/users/reset-password')
         .send(resetData)
-        .expect(200); // This should actually succeed since we're not testing password confirmation
+        .expect(400);
 
-      expect(response.body.message).toBe('Password reset successfully');
+      expect(response.body.error).toBe('Validation Error');
+      expect(response.body.message).toBe('Request validation failed');
     });
 
     it('should return 400 for missing required fields', async () => {
+      const resetToken = await generateResetToken();
       const resetData = {
         token: resetToken,
         // Missing password
