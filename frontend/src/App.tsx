@@ -10,6 +10,7 @@ import SignupTestPage from './pages/SignupTestPage';
 import { InvitationTestPage } from './modules/accounts/pages/InvitationTestPage';
 import AccountSelectionPage from './pages/AccountSelectionPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
+import Dashboard from './pages/Dashboard';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const App: React.FC = () => {
             <Route path="/invitation-test" element={<InvitationTestPage />} />
             <Route path="/accounts" element={<AccountSelectionPage />} />
             <Route path="/account-settings" element={<AccountSettingsPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </Router>
       </AccountProvider>

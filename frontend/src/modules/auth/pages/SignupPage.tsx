@@ -18,7 +18,7 @@ const SignupPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       await register(data);
-      // Navigate to dashboard or home page after successful signup
+      // Navigate to dashboard after successful signup (account is created automatically)
       navigate('/dashboard');
     } catch (err) {
       // Error is handled by the AuthContext and displayed in the form

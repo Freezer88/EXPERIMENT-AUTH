@@ -80,51 +80,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Mock login function - replace with actual API call
-  const login = async (credentials: LoginRequest): Promise<void> => {
-    dispatch({ type: 'LOGIN_START' });
-
-    try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock validation
-      if (credentials.email === 'test@example.com' && credentials.password === 'SecurePass123!') {
-        const mockUser: User = {
-          id: '1',
-          email: credentials.email,
-          firstName: 'John',
-          lastName: 'Doe',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        const mockToken = 'mock-jwt-token';
-
-        // Store token in localStorage
-        localStorage.setItem('authToken', mockToken);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-
-        dispatch({
-          type: 'LOGIN_SUCCESS',
-          payload: { user: mockUser, token: mockToken },
-        });
-      } else {
-        throw new Error('Invalid email or password');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
-      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
-      throw error;
-    }
-  };
-
   // Real register function with API call
   const register = async (data: RegisterRequest & { termsAccepted: boolean }): Promise<void> => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
-      const response = await fetch('/api/users/register', {
+      const response = await fetch('http://localhost:3000/api/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,6 +96,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           firstName: data.firstName,
           lastName: data.lastName,
           marketingConsent: data.marketingConsent || false,
+          acceptTerms: data.termsAccepted,
         }),
       });
 
@@ -168,10 +130,53 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Real login function with API call
+  const login = async (credentials: LoginRequest): Promise<void> => {
+    dispatch({ type: 'LOGIN_START' });
+
+    try {
+      const response = await fetch('http://localhost:3000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Login failed');
+      }
+
+      // Store tokens in localStorage
+      localStorage.setItem('accessToken', responseData.tokens.accessToken);
+      localStorage.setItem('refreshToken', responseData.tokens.refreshToken);
+      localStorage.setItem('user', JSON.stringify(responseData.user));
+
+      dispatch({
+        type: 'LOGIN_SUCCESS',
+        payload: { 
+          user: responseData.user, 
+          token: responseData.tokens.accessToken 
+        },
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
+      throw error;
+    }
+  };
+
   const logout = async (): Promise<void> => {
     // Clear localStorage
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('activeAccount');
     
     dispatch({ type: 'LOGOUT' });
   };
@@ -186,7 +191,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Check for existing auth on mount
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('accessToken');
     const userData = localStorage.getItem('user');
 
     if (token && userData) {
@@ -198,8 +203,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
       } catch (error) {
         // Clear invalid data
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+        localStorage.removeItem('activeAccount');
       }
     }
   }, []);

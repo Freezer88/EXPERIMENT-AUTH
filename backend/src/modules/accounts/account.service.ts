@@ -1,4 +1,4 @@
-import { Account, CreateAccountRequest, AccountMember, AccountRole } from './account.types';
+import { Account, CreateAccountRequest, AccountMember, AccountRole, AccountSettings } from './account.types';
 
 // Mock database for now - will be replaced with Prisma
 class AccountService {
@@ -216,8 +216,7 @@ class AccountService {
     }
 
     // Prevent demoting the only owner
-    const member = this.accountMembers[memberIndex];
-    if (member.role === 'owner' && newRole !== 'owner') {
+    if (newRole !== 'owner' && this.accountMembers[memberIndex].role === 'owner') {
       const ownerCount = this.accountMembers.filter(m => m.accountId === accountId && m.role === 'owner').length;
       if (ownerCount === 1) {
         throw new Error('Cannot demote the only owner of the account');
@@ -231,7 +230,6 @@ class AccountService {
 
     // Update the role
     this.accountMembers[memberIndex].role = newRole;
-    this.accountMembers[memberIndex].updatedAt = new Date();
     console.log(`[AUDIT] User ${updatedBy} updated role of member ${memberUserId} to ${newRole} in account ${accountId}`);
   }
 
