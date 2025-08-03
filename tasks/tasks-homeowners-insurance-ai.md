@@ -268,20 +268,20 @@ This task list covers the complete implementation of the homeowners-insurance-ai
   - [x] 2.14 Add frontend authentication component tests (✅ PasswordStrengthMeter tests complete, SignupForm tests created)
 
 - [ ] 3.0 Account Management & RBAC Implementation
-  - [ ] 3.1 Implement account creation endpoint with owner assignment
-  - [ ] 3.2 Create account member invitation system with role assignment
-  - [ ] 3.3 Implement account member role management (update, remove)
-  - [ ] 3.4 Set up RBAC middleware for protecting routes based on user roles
-  - [ ] 3.5 Create account listing endpoint for user's accessible accounts
-  - [ ] 3.6 Implement account settings update functionality
-  - [ ] 3.7 Create frontend account context for managing active account
-  - [ ] 3.8 Implement account switcher component for multi-account users
-  - [ ] 3.9 Create account settings page with member management
-  - [ ] 3.10 Implement account creation form
-  - [ ] 3.11 Create account selection page for users with multiple accounts
-  - [ ] 3.12 Implement member invitation modal with role selection
-  - [ ] 3.13 Add account management unit tests
-  - [ ] 3.14 Add RBAC integration tests
+  - [x] 3.1 Implement account creation endpoint with owner assignment
+  - [x] 3.2 Create account member invitation system with role assignment
+  - [x] 3.3 Implement account member role management (update, remove)
+  - [x] 3.4 Set up RBAC middleware for protecting routes based on user roles
+  - [x] 3.5 Create account listing endpoint for user's accessible accounts
+  - [x] 3.6 Implement account settings update functionality
+  - [x] 3.7 Create frontend account context for managing active account
+- [x] 3.8 Implement account switcher component for multi-account users
+- [x] 3.9 Create account settings page with member management
+- [x] 3.10 Implement account creation form
+- [x] 3.11 Create account selection page for users with multiple accounts
+- [x] 3.12 Implement member invitation modal with role selection
+- [x] 3.13 Add account management unit tests
+- [x] 3.14 Add RBAC integration tests
 
 - [ ] 4.0 Database Schema & ORM Setup
   - [ ] 4.1 Set up PostgreSQL database connection

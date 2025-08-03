@@ -6,4 +6,5 @@ export { Toast, ToastContainer } from './Toast';
 export { Spinner, LoadingOverlay, LoadingButton, spinnerVariants } from './Spinner';
 export { Checkbox, checkboxVariants } from './Checkbox';
 export { Radio, radioVariants } from './Radio';
-export { PasswordStrengthMeter } from './PasswordStrengthMeter'; 
+export { PasswordStrengthMeter } from './PasswordStrengthMeter';
+export { Select } from './Select'; 

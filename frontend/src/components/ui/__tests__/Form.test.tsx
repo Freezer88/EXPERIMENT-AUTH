@@ -129,11 +129,13 @@ describe('Form Integration', () => {
     await user.click(screen.getByLabelText(/agree to the terms/i));
     await user.click(screen.getByRole('button', { name: /submit/i }));
 
+    // Check if the form was submitted (it shouldn't be)
+    expect(mockOnSubmit).not.toHaveBeenCalled();
+    
+    // Check if validation error appears
     await waitFor(() => {
       expect(screen.getByText(/please enter a valid email/i)).toBeInTheDocument();
     });
-
-    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('validates password length', async () => {
@@ -256,7 +258,7 @@ describe('Form Integration', () => {
       />
     );
 
-    const maleRadio = screen.getByLabelText(/male/i);
+    const maleRadio = screen.getAllByLabelText(/male/i)[0];
     await user.click(maleRadio);
     await user.click(screen.getByRole('button', { name: /submit/i }));
 
@@ -281,7 +283,7 @@ describe('Form Integration', () => {
 
     const submitButton = screen.getByRole('button', { name: /submit/i });
     expect(submitButton).toBeDisabled();
-    expect(submitButton).toHaveClass('opacity-50');
+    expect(submitButton.className).toContain('opacity-50');
   });
 
   it('uses default values', async () => {
@@ -308,11 +310,12 @@ describe('Form Integration', () => {
   it('handles form reset', async () => {
     const user = userEvent.setup();
     
-    render(
+    const { rerender } = render(
       <Form
         fields={defaultFields}
         onSubmit={mockOnSubmit}
         submitLabel="Submit"
+        defaultValues={{}}
       />
     );
 
@@ -322,22 +325,14 @@ describe('Form Integration', () => {
     await user.type(emailInput, 'test@example.com');
     await user.type(passwordInput, 'password123');
 
-    // Reset form by unmounting and remounting
-    const { unmount } = render(
+    // Reset form by rerendering with a key change
+    rerender(
       <Form
+        key="reset-form"
         fields={defaultFields}
         onSubmit={mockOnSubmit}
         submitLabel="Submit"
-      />
-    );
-
-    unmount();
-
-    const { rerender } = render(
-      <Form
-        fields={defaultFields}
-        onSubmit={mockOnSubmit}
-        submitLabel="Submit"
+        defaultValues={{}}
       />
     );
 

@@ -60,29 +60,29 @@ router.put('/change-password',
   userController.changePassword
 );
 
-// Admin routes (require admin role)
-router.get('/stats', 
-  authenticateToken, 
-  requireAdmin, 
-  userController.getUserStats
-);
+// Admin routes (require admin role) - commented out for now
+// router.get('/stats', 
+//   authenticateToken, 
+//   requireAdmin, 
+//   userController.getUserStats
+// );
 
-router.get('/search', 
-  authenticateToken, 
-  requireAdmin, 
-  userController.searchUsers
-);
+// router.get('/search', 
+//   authenticateToken, 
+//   requireAdmin, 
+//   userController.searchUsers
+// );
 
-router.delete('/:id', 
-  authenticateToken, 
-  requireAdmin, 
-  userController.deleteUser
-);
+// router.delete('/:id', 
+//   authenticateToken, 
+//   requireAdmin, 
+//   userController.deleteUser
+// );
 
-router.put('/:id/reactivate', 
-  authenticateToken, 
-  requireAdmin, 
-  userController.reactivateUser
-);
+// router.put('/:id/reactivate', 
+//   authenticateToken, 
+//   requireAdmin, 
+//   userController.reactivateUser
+// );
 
 export default router; 

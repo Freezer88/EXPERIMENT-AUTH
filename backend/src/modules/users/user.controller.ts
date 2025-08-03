@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { UserService } from './user.service';
 import { generateTokenPair } from '../common/security/jwt';
 import { logAuthAttempt } from '../../middlewares/auth.middleware';
+import { accountService } from '../accounts/account.service';
 
 export class UserController {
   private userService: UserService;
@@ -18,13 +19,20 @@ export class UserController {
       // Create user
       const newUser = await this.userService.createUser(userData);
 
-      // Generate tokens
+      // Create default account for the user
+      const defaultAccountName = `${newUser.firstName}'s Account`;
+      const defaultAccount = await accountService.createAccount(
+        { name: defaultAccountName },
+        newUser.id
+      );
+
+      // Generate tokens with account ID
       const tokenPair = generateTokenPair({
         userId: newUser.id,
         email: newUser.email,
-        accountId: undefined,
-        role: 'user',
-        permissions: ['read'],
+        accountId: defaultAccount.id,
+        role: 'owner',
+        permissions: ['read', 'write', 'admin'],
       });
 
       // Log the registration attempt
@@ -33,6 +41,7 @@ export class UserController {
       res.status(201).json({
         message: 'User registered successfully',
         user: newUser,
+        account: defaultAccount,
         tokens: tokenPair,
       });
     } catch (error) {

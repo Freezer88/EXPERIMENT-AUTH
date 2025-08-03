@@ -86,6 +86,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             type={finalType}
+            aria-invalid={hasError ? 'true' : 'false'}
             {...props}
           />
           {rightIcon && (

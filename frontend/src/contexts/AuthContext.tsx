@@ -119,37 +119,47 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Mock register function - replace with actual API call
+  // Real register function with API call
   const register = async (data: RegisterRequest & { termsAccepted: boolean }): Promise<void> => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('/api/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          marketingConsent: data.marketingConsent || false,
+        }),
+      });
 
-      // Mock validation
-      if (data.email === 'newuser@example.com') {
-        throw new Error('Email already exists');
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Registration failed');
       }
 
-      const mockUser: User = {
-        id: '2',
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      // Store tokens in localStorage
+      localStorage.setItem('accessToken', responseData.tokens.accessToken);
+      localStorage.setItem('refreshToken', responseData.tokens.refreshToken);
+      localStorage.setItem('user', JSON.stringify(responseData.user));
 
-      const mockToken = 'mock-jwt-token-new-user';
-
-      // Store token in localStorage
-      localStorage.setItem('authToken', mockToken);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      // If account was created automatically, store it
+      if (responseData.account) {
+        localStorage.setItem('activeAccount', JSON.stringify(responseData.account));
+      }
 
       dispatch({
         type: 'LOGIN_SUCCESS',
-        payload: { user: mockUser, token: mockToken },
+        payload: { 
+          user: responseData.user, 
+          token: responseData.tokens.accessToken 
+        },
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Registration failed';

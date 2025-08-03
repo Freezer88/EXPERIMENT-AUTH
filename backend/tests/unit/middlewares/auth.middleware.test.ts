@@ -10,11 +10,11 @@ import {
   authenticateRefreshToken,
   validateToken,
   logAuthAttempt,
-} from '../../../../src/middlewares/auth.middleware';
-import { generateAccessToken, generateRefreshToken } from '../../../../src/modules/common/security/jwt';
+} from '../../../src/middlewares/auth.middleware';
+import { generateAccessToken, generateRefreshToken } from '../../../src/modules/common/security/jwt';
 
 // Mock the JWT utilities
-jest.mock('../../../../src/modules/common/security/jwt', () => ({
+jest.mock('../../../src/modules/common/security/jwt', () => ({
   generateAccessToken: jest.fn(),
   generateRefreshToken: jest.fn(),
   verifyAccessToken: jest.fn(),
@@ -22,7 +22,7 @@ jest.mock('../../../../src/modules/common/security/jwt', () => ({
 }));
 
 // Mock the security config
-jest.mock('../../../../src/config/security', () => ({
+jest.mock('../../../src/config/security', () => ({
   isTokenBlacklisted: jest.fn().mockReturnValue(false),
 }));
 
@@ -58,7 +58,7 @@ describe('Authentication Middleware', () => {
       const token = 'valid-token';
       mockRequest.headers = { authorization: `Bearer ${token}` };
       
-      const { verifyAccessToken } = require('../../../../src/modules/common/security/jwt');
+      const { verifyAccessToken } = require('../../../src/modules/common/security/jwt');
       verifyAccessToken.mockReturnValue(mockPayload);
 
       authenticateToken(mockRequest as Request, mockResponse as Response, mockNext);
@@ -83,7 +83,7 @@ describe('Authentication Middleware', () => {
       const token = 'blacklisted-token';
       mockRequest.headers = { authorization: `Bearer ${token}` };
       
-      const { isTokenBlacklisted } = require('../../../../src/config/security');
+      const { isTokenBlacklisted } = require('../../../src/config/security');
       isTokenBlacklisted.mockReturnValue(true);
 
       authenticateToken(mockRequest as Request, mockResponse as Response, mockNext);
@@ -443,8 +443,8 @@ describe('Authentication Middleware', () => {
     it('should log authentication attempt', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       mockRequest.method = 'POST';
-      mockRequest.path = '/auth/login';
-      mockRequest.ip = '127.0.0.1';
+      (mockRequest as any).path = '/auth/login';
+      (mockRequest as any).ip = '127.0.0.1';
       mockRequest.get = jest.fn().mockReturnValue('Test User Agent');
       
       logAuthAttempt(mockRequest as Request, mockResponse as Response, mockNext);

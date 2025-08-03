@@ -13,7 +13,7 @@ import {
   blacklistToken,
   isTokenBlacklisted,
   cleanupTokenBlacklist,
-} from '../../../../src/config/security';
+} from '../../../src/config/security';
 
 describe('Security Configuration', () => {
   describe('JWT Configuration', () => {
@@ -135,15 +135,15 @@ describe('Security Configuration', () => {
     });
 
     it('should have cookie http only setting', () => {
-      expect(SESSION_CONFIG.COKIE_HTTP_ONLY).toBe(true);
+      expect(SESSION_CONFIG.COOKIE_HTTP_ONLY).toBe(true);
     });
 
     it('should have cookie same site setting', () => {
-      expect(SESSION_CONFIG.COKIE_SAME_SITE).toBe('strict');
+      expect(SESSION_CONFIG.COOKIE_SAME_SITE).toBe('strict');
     });
 
     it('should have cookie max age', () => {
-      expect(SESSION_CONFIG.COKIE_MAX_AGE).toBe(24 * 60 * 60 * 1000);
+      expect(SESSION_CONFIG.COOKIE_MAX_AGE).toBe(24 * 60 * 60 * 1000);
     });
   });
 

@@ -58,32 +58,36 @@ const Form: React.FC<FormProps> = ({
             name={field.name}
             control={control}
             rules={field.validation}
-            render={({ field: { onChange, value } }) => (
-              <div className="space-y-2">
-                {field.label && (
-                  <label className="text-sm font-medium leading-none">
-                    {field.label}
-                    {field.required && <span className="text-destructive ml-1">*</span>}
-                  </label>
-                )}
-                <textarea
-                  className={clsx(
-                    'flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                    error && 'border-destructive focus-visible:ring-destructive'
+            render={({ field: { onChange, value } }) => {
+              const textareaId = `textarea-${Math.random().toString(36).substr(2, 9)}`;
+              return (
+                <div className="space-y-2">
+                  {field.label && (
+                    <label htmlFor={textareaId} className="text-sm font-medium leading-none">
+                      {field.label}
+                      {field.required && <span className="text-destructive ml-1">*</span>}
+                    </label>
                   )}
-                  placeholder={field.placeholder}
-                  value={value || ''}
-                  onChange={onChange}
-                  rows={4}
-                />
-                {error && (
-                  <p className="text-sm text-destructive">{error.message}</p>
-                )}
-                {field.helperText && !error && (
-                  <p className="text-sm text-muted-foreground">{field.helperText}</p>
-                )}
-              </div>
-            )}
+                  <textarea
+                    id={textareaId}
+                    className={clsx(
+                      'flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                      error && 'border-destructive focus-visible:ring-destructive'
+                    )}
+                    placeholder={field.placeholder}
+                    value={value || ''}
+                    onChange={onChange}
+                    rows={4}
+                  />
+                  {error && (
+                    <p className="text-sm text-destructive">{error.message}</p>
+                  )}
+                  {field.helperText && !error && (
+                    <p className="text-sm text-muted-foreground">{field.helperText}</p>
+                  )}
+                </div>
+              );
+            }}
           />
         );
 
@@ -93,37 +97,41 @@ const Form: React.FC<FormProps> = ({
             name={field.name}
             control={control}
             rules={field.validation}
-            render={({ field: { onChange, value } }) => (
-              <div className="space-y-2">
-                {field.label && (
-                  <label className="text-sm font-medium leading-none">
-                    {field.label}
-                    {field.required && <span className="text-destructive ml-1">*</span>}
-                  </label>
-                )}
-                <select
-                  className={clsx(
-                    'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                    error && 'border-destructive focus-visible:ring-destructive'
+            render={({ field: { onChange, value } }) => {
+              const selectId = `select-${Math.random().toString(36).substr(2, 9)}`;
+              return (
+                <div className="space-y-2">
+                  {field.label && (
+                    <label htmlFor={selectId} className="text-sm font-medium leading-none">
+                      {field.label}
+                      {field.required && <span className="text-destructive ml-1">*</span>}
+                    </label>
                   )}
-                  value={value || ''}
-                  onChange={onChange}
-                >
-                  <option value="">Select an option</option>
-                  {field.options?.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {error && (
-                  <p className="text-sm text-destructive">{error.message}</p>
-                )}
-                {field.helperText && !error && (
-                  <p className="text-sm text-muted-foreground">{field.helperText}</p>
-                )}
-              </div>
-            )}
+                  <select
+                    id={selectId}
+                    className={clsx(
+                      'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                      error && 'border-destructive focus-visible:ring-destructive'
+                    )}
+                    value={value || ''}
+                    onChange={onChange}
+                  >
+                    <option value="">Select an option</option>
+                    {field.options?.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  {error && (
+                    <p className="text-sm text-destructive">{error.message}</p>
+                  )}
+                  {field.helperText && !error && (
+                    <p className="text-sm text-muted-foreground">{field.helperText}</p>
+                  )}
+                </div>
+              );
+            }}
           />
         );
 
@@ -187,13 +195,14 @@ const Form: React.FC<FormProps> = ({
             name={field.name}
             control={control}
             rules={field.validation}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value, onBlur } }) => (
               <Input
                 type={field.type}
                 label={field.label}
                 placeholder={field.placeholder}
                 value={value || ''}
                 onChange={onChange}
+                onBlur={onBlur}
                 error={error?.message}
                 helperText={field.helperText}
                 required={field.required}
@@ -204,8 +213,12 @@ const Form: React.FC<FormProps> = ({
     }
   };
 
+  const onSubmitHandler = (data: any) => {
+    onSubmit(data);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={clsx('space-y-6', className)}>
+    <form onSubmit={handleSubmit(onSubmitHandler)} className={clsx('space-y-6', className)}>
       {fields.map((field) => (
         <div key={field.name}>
           {renderField(field)}
