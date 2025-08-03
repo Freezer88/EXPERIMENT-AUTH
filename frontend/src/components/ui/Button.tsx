@@ -3,27 +3,39 @@ import { clsx } from 'clsx';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
+  'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed active:scale-95',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'underline-offset-4 hover:underline text-primary',
+        primary: 'bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500 shadow-sm hover:shadow-md active:bg-primary-700 border border-primary-500 hover:border-primary-600',
+        secondary: 'bg-white text-primary-600 border border-primary-200 hover:bg-primary-50 hover:border-primary-300 focus-visible:ring-primary-500 shadow-sm hover:shadow-md active:bg-primary-100',
+        outline: 'bg-transparent text-primary-600 border border-primary-200 hover:bg-primary-50 hover:border-primary-300 focus-visible:ring-primary-500 active:bg-primary-100',
+        ghost: 'bg-transparent text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500 active:bg-primary-100',
+        destructive: 'bg-error-500 text-white hover:bg-error-600 focus-visible:ring-error-500 shadow-sm hover:shadow-md active:bg-error-700 border border-error-500 hover:border-error-600',
+        success: 'bg-success-500 text-white hover:bg-success-600 focus-visible:ring-success-500 shadow-sm hover:shadow-md active:bg-success-700 border border-success-500 hover:border-success-600',
+        warning: 'bg-warning-500 text-white hover:bg-warning-600 focus-visible:ring-warning-500 shadow-sm hover:shadow-md active:bg-warning-700 border border-warning-500 hover:border-warning-600',
+        error: 'bg-error-500 text-white hover:bg-error-600 focus-visible:ring-error-500 shadow-sm hover:shadow-md active:bg-error-700 border border-error-500 hover:border-error-600',
+        link: 'bg-transparent text-primary-600 hover:text-primary-700 underline-offset-4 hover:underline focus-visible:ring-primary-500',
       },
       size: {
-        default: 'h-10 py-2 px-4',
-        sm: 'h-9 px-3 rounded-md',
-        lg: 'h-11 px-8 rounded-md',
+        xs: 'h-7 px-2 text-xs',
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-6 text-base',
+        xl: 'h-14 px-8 text-lg',
         icon: 'h-10 w-10',
+        'icon-sm': 'h-8 w-8',
+        'icon-lg': 'h-12 w-12',
+      },
+      fullWidth: {
+        true: 'w-full',
+        false: '',
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: 'primary',
+      size: 'md',
+      fullWidth: false,
     },
   }
 );
@@ -35,13 +47,25 @@ export interface ButtonProps
   loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, loading = false, leftIcon, rightIcon, children, disabled, ...props }, ref) => {
+  ({ 
+    className, 
+    variant, 
+    size, 
+    fullWidth,
+    loading = false, 
+    leftIcon, 
+    rightIcon, 
+    children, 
+    disabled, 
+    ...props 
+  }, ref) => {
     return (
       <button
-        className={clsx(buttonVariants({ variant, size, className }))}
+        className={clsx(buttonVariants({ variant, size, fullWidth, className }))}
         ref={ref}
         disabled={disabled || loading}
         {...props}
@@ -68,9 +92,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </svg>
         )}
-        {!loading && leftIcon && <span className="mr-2">{leftIcon}</span>}
-        {children}
-        {!loading && rightIcon && <span className="ml-2">{rightIcon}</span>}
+        {!loading && leftIcon && <span className="mr-2 flex-shrink-0">{leftIcon}</span>}
+        <span className="flex items-center justify-center">{children}</span>
+        {!loading && rightIcon && <span className="ml-2 flex-shrink-0">{rightIcon}</span>}
       </button>
     );
   }

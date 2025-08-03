@@ -1,7 +1,31 @@
 import React from 'react';
 import { clsx } from 'clsx';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-export interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> {
+const radioVariants = cva(
+  'peer relative flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        default: 'border-secondary-300 bg-white text-white focus-visible:ring-primary-500 hover:border-primary-400 data-[state=checked]:border-primary-600',
+        error: 'border-error-300 bg-white text-white focus-visible:ring-error-500 hover:border-error-400 data-[state=checked]:border-error-600',
+      },
+      size: {
+        sm: 'h-3 w-3',
+        md: 'h-4 w-4',
+        lg: 'h-5 w-5',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'md',
+    },
+  }
+);
+
+export interface RadioProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+    VariantProps<typeof radioVariants> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -9,41 +33,66 @@ export interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
-  ({ className, label, error, helperText, containerClassName, id, ...props }, ref) => {
+  ({ 
+    className, 
+    variant, 
+    size, 
+    label, 
+    error, 
+    helperText, 
+    containerClassName, 
+    id, 
+    ...props 
+  }, ref) => {
     const radioId = id || `radio-${Math.random().toString(36).substr(2, 9)}`;
     
     return (
       <div className={clsx('space-y-2', containerClassName)}>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-start space-x-3">
           <div className="relative">
             <input
               id={radioId}
               type="radio"
-              className={clsx(
-                'peer h-4 w-4 shrink-0 rounded-full border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
-                error && 'border-destructive',
-                className
-              )}
+              className="peer sr-only"
               ref={ref}
               aria-invalid={error ? 'true' : 'false'}
               aria-describedby={error ? `${radioId}-error` : helperText ? `${radioId}-helper` : undefined}
               {...props}
             />
-            <div className="absolute left-0 top-0 h-4 w-4 rounded-full border-2 border-transparent peer-data-[state=checked]:border-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50" />
-          </div>
-          {label && (
-            <label htmlFor={radioId} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              {label}
+            <label
+              htmlFor={radioId}
+              className={clsx(
+                radioVariants({ variant: error ? 'error' : variant, size, className }),
+                'peer-checked:data-[state=checked]'
+              )}
+            >
+              <div className="h-1.5 w-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" />
             </label>
+          </div>
+          
+          {label && (
+            <div className="flex-1">
+              <label
+                htmlFor={radioId}
+                className="text-sm font-medium text-secondary-700 cursor-pointer"
+              >
+                {label}
+              </label>
+            </div>
           )}
         </div>
+        
         {error && (
-          <p id={`${radioId}-error`} className="text-sm text-destructive">
+          <p id={`${radioId}-error`} className="text-sm text-error-600 flex items-center">
+            <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
             {error}
           </p>
         )}
+        
         {helperText && !error && (
-          <p id={`${radioId}-helper`} className="text-sm text-muted-foreground">
+          <p id={`${radioId}-helper`} className="text-sm text-secondary-500">
             {helperText}
           </p>
         )}
@@ -54,4 +103,4 @@ const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
 
 Radio.displayName = 'Radio';
 
-export { Radio }; 
+export { Radio, radioVariants }; 
