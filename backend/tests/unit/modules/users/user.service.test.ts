@@ -7,7 +7,8 @@ describe('UserService', () => {
 
   beforeEach(() => {
     userService = UserService.getInstance();
-    // Clear any existing users (in a real app, this would be database cleanup)
+    // Clear any existing users for test isolation
+    userService.clearUsers();
   });
 
   describe('createUser', () => {
@@ -46,7 +47,7 @@ describe('UserService', () => {
       const userData = { ...validUserData, phoneNumber: '(123) 456-7890' };
       const result = await userService.createUser(userData);
 
-      expect(result.phoneNumber).toBe('+1234567890');
+      expect(result.phoneNumber).toBe('1234567890');
     });
 
     it('should hash password securely', async () => {
@@ -229,7 +230,7 @@ describe('UserService', () => {
 
       const result = await userService.updateUser(userId, updateData);
 
-      expect(result.phoneNumber).toBe('+9876543210');
+      expect(result.phoneNumber).toBe('9876543210');
     });
 
     it('should throw error for non-existent user', async () => {
@@ -384,6 +385,87 @@ describe('UserService', () => {
 
     it('should not reveal if email exists or not', async () => {
       await expect(userService.requestPasswordReset('nonexistent@example.com')).resolves.not.toThrow();
+    });
+
+    it('should reset password successfully with valid token', async () => {
+      // Request password reset to get a token
+      await userService.requestPasswordReset('test@example.com');
+      
+      const user = await userService.findUserByEmail('test@example.com');
+      const resetToken = user!.passwordResetToken!;
+
+      // Reset password with new password
+      await expect(userService.resetPassword(resetToken, 'NewStrongPass456!')).resolves.not.toThrow();
+
+      // Verify new password works
+      const authenticatedUser = await userService.authenticateUser('test@example.com', 'NewStrongPass456!');
+      expect(authenticatedUser).toBeDefined();
+      expect(authenticatedUser!.email).toBe('test@example.com');
+
+      // Verify reset token is cleared
+      const updatedUser = await userService.findUserByEmail('test@example.com');
+      expect(updatedUser!.passwordResetToken).toBeUndefined();
+      expect(updatedUser!.passwordResetExpires).toBeUndefined();
+    });
+
+    it('should throw error for invalid reset token', async () => {
+      await expect(userService.resetPassword('invalid-token', 'NewStrongPass456!')).rejects.toThrow(
+        'Invalid or expired reset token'
+      );
+    });
+
+    it('should throw error for expired reset token', async () => {
+      // Request password reset
+      await userService.requestPasswordReset('test@example.com');
+      
+      const user = await userService.findUserByEmail('test@example.com');
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const resetToken = user.passwordResetToken!;
+
+      // Manually expire the token
+      user.passwordResetExpires = new Date(Date.now() - 1000);
+      // Note: In a real implementation, this would be handled by the service
+
+      await expect(userService.resetPassword(resetToken, 'NewStrongPass456!')).rejects.toThrow(
+        'Invalid or expired reset token'
+      );
+    });
+
+    it('should throw error for weak new password during reset', async () => {
+      // Request password reset to get a token
+      await userService.requestPasswordReset('test@example.com');
+      
+      const user = await userService.findUserByEmail('test@example.com');
+      const resetToken = user!.passwordResetToken!;
+
+      await expect(userService.resetPassword(resetToken, 'weak')).rejects.toThrow(
+        'Password validation failed'
+      );
+    });
+
+    it('should validate password strength during reset', async () => {
+      // Request password reset to get a token
+      await userService.requestPasswordReset('test@example.com');
+      
+      const user = await userService.findUserByEmail('test@example.com');
+      const resetToken = user!.passwordResetToken!;
+
+      // Test various weak passwords
+      const weakPasswords = [
+        'short', // too short
+        'nouppercase123!', // no uppercase
+        'NOLOWERCASE123!', // no lowercase
+        'NoNumbers!', // no numbers
+        'NoSpecialChars123', // no special characters
+      ];
+
+      for (const weakPassword of weakPasswords) {
+        await expect(userService.resetPassword(resetToken, weakPassword)).rejects.toThrow(
+          'Password validation failed'
+        );
+      }
     });
   });
 

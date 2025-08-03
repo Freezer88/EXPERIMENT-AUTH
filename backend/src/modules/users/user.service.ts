@@ -30,6 +30,11 @@ export class UserService {
     return UserService.instance;
   }
 
+  // Clear all users (for testing purposes)
+  public clearUsers(): void {
+    users.clear();
+  }
+
   // Hash password with bcrypt
   private async hashPassword(password: string): Promise<string> {
     const saltRounds = 12;

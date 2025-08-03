@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
-import { validateRequest } from '../common/validation/validator';
-import { userRegistrationSchema, userProfileUpdateSchema, passwordChangeSchema } from '../common/validation/schemas';
 import { generateTokenPair } from '../common/security/jwt';
 import { logAuthAttempt } from '../../middlewares/auth.middleware';
 
@@ -61,6 +59,56 @@ export class UserController {
           message: 'An unexpected error occurred',
         });
       }
+    }
+  };
+
+  // Login user
+  login = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, password } = req.body;
+      
+      // Authenticate user
+      const user = await this.userService.authenticateUser(email, password);
+      
+      if (!user) {
+        res.status(401).json({
+          error: 'Unauthorized',
+          message: 'Invalid email or password',
+        });
+        return;
+      }
+
+      // Generate tokens
+      const tokenPair = generateTokenPair({
+        userId: user.id,
+        email: user.email,
+        accountId: undefined,
+        role: 'user',
+        permissions: ['read'],
+      });
+
+      // Log the login attempt
+      logAuthAttempt(req, res, () => {});
+
+      res.status(200).json({
+        message: 'Login successful',
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phoneNumber: user.phoneNumber,
+          isEmailVerified: user.isEmailVerified,
+          marketingConsent: user.marketingConsent,
+          lastLoginAt: user.lastLoginAt,
+        },
+        tokens: tokenPair,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'Failed to login user',
+      });
     }
   };
 
@@ -286,7 +334,7 @@ export class UserController {
   };
 
   // Get user statistics (admin only)
-  getUserStats = async (req: Request, res: Response): Promise<void> => {
+  getUserStats = async (_req: Request, res: Response): Promise<void> => {
     try {
       const stats = await this.userService.getUserStats();
 

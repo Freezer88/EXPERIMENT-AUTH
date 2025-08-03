@@ -3,16 +3,15 @@ import { UserController } from './user.controller';
 import { validateRequest } from '../common/validation/validator';
 import { 
   userRegistrationSchema, 
+  userLoginSchema,
   userProfileUpdateSchema, 
   passwordChangeSchema,
   passwordResetRequestSchema,
-  passwordResetSchema,
-  emailVerificationSchema
+  passwordResetSchema
 } from '../common/validation/schemas';
 import { 
   authenticateToken, 
-  requireAdmin, 
-  requireRole 
+  requireAdmin
 } from '../../middlewares/auth.middleware';
 
 const router = Router();
@@ -22,6 +21,11 @@ const userController = new UserController();
 router.post('/register', 
   validateRequest(userRegistrationSchema), 
   userController.register
+);
+
+router.post('/login', 
+  validateRequest(userLoginSchema), 
+  userController.login
 );
 
 router.get('/verify-email/:token', 
