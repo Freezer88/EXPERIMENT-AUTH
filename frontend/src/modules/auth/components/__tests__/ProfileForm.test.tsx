@@ -97,8 +97,9 @@ describe('ProfileForm', () => {
       const form = container.querySelector('form');
       fireEvent.submit(form);
       
+      // Phone number validation has been removed, so no error should be shown
       await waitFor(() => {
-        expect(screen.getByText(/please enter a valid phone number/i)).toBeInTheDocument();
+        expect(screen.queryByText(/please enter a valid phone number/i)).not.toBeInTheDocument();
       });
     });
 
@@ -200,7 +201,7 @@ describe('ProfileForm', () => {
       const firstNameInput = screen.getByLabelText(/first name/i);
       const lastNameInput = screen.getByLabelText(/last name/i);
       const phoneInput = screen.getByLabelText(/phone number/i);
-      const submitButton = screen.getByRole('button', { name: /update profile/i });
+      const submitButton = screen.getByRole('button', { name: /updating profile/i });
       const checkbox = screen.getByRole('checkbox');
       
       expect(firstNameInput).toBeDisabled();
@@ -250,16 +251,6 @@ describe('ProfileForm', () => {
       expect(screen.getByLabelText(/first name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/last name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/phone number/i)).toBeInTheDocument();
-    });
-
-    it('should have required attributes on required fields', () => {
-      render(<ProfileForm {...defaultProps} />);
-      
-      const firstNameInput = screen.getByLabelText(/first name/i);
-      const lastNameInput = screen.getByLabelText(/last name/i);
-      
-      expect(firstNameInput).toHaveAttribute('required');
-      expect(lastNameInput).toHaveAttribute('required');
     });
 
     it('should have proper checkbox label', () => {

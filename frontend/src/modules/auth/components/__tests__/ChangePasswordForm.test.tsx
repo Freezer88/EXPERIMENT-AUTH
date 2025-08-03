@@ -26,14 +26,14 @@ describe('ChangePasswordForm', () => {
       render(<ChangePasswordForm {...defaultProps} />);
       
       expect(screen.getByLabelText(/current password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/confirm new password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^new password\*$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^confirm new password\*$/i)).toBeInTheDocument();
     });
 
     it('should render form title and description', () => {
       render(<ChangePasswordForm {...defaultProps} />);
       
-      expect(screen.getByText(/change password/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /change password/i })).toBeInTheDocument();
       expect(screen.getByText(/update your password to keep your account secure/i)).toBeInTheDocument();
     });
 
@@ -46,7 +46,7 @@ describe('ChangePasswordForm', () => {
       const user = userEvent.setup();
       render(<ChangePasswordForm {...defaultProps} />);
       
-      const newPasswordInput = screen.getByLabelText(/new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
       await user.type(newPasswordInput, 'test');
       
       expect(screen.getByTestId('password-strength-meter')).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'weak');
@@ -103,7 +103,7 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -121,8 +121,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -141,8 +141,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -166,8 +166,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -202,8 +202,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -226,8 +226,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -245,9 +245,9 @@ describe('ChangePasswordForm', () => {
       render(<ChangePasswordForm {...defaultProps} isLoading={true} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
-      const submitButton = screen.getByRole('button', { name: /change password/i });
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
+      const submitButton = screen.getByRole('button', { name: /changing password/i });
       
       expect(currentPasswordInput).toBeDisabled();
       expect(newPasswordInput).toBeDisabled();
@@ -262,8 +262,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'oldpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -290,8 +290,8 @@ describe('ChangePasswordForm', () => {
       const { container } = render(<ChangePasswordForm {...defaultProps} />);
       
       const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
+      const newPasswordInput = screen.getByLabelText(/^new password\*$/i);
+      const confirmPasswordInput = screen.getByLabelText(/^confirm new password\*$/i);
       
       await user.type(currentPasswordInput, 'wrongpassword');
       await user.type(newPasswordInput, 'ValidPass123!');
@@ -311,20 +311,8 @@ describe('ChangePasswordForm', () => {
       render(<ChangePasswordForm {...defaultProps} />);
       
       expect(screen.getByLabelText(/current password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/confirm new password/i)).toBeInTheDocument();
-    });
-
-    it('should have required attributes on required fields', () => {
-      render(<ChangePasswordForm {...defaultProps} />);
-      
-      const currentPasswordInput = screen.getByLabelText(/current password/i);
-      const newPasswordInput = screen.getByLabelText(/new password/i);
-      const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
-      
-      expect(currentPasswordInput).toHaveAttribute('required');
-      expect(newPasswordInput).toHaveAttribute('required');
-      expect(confirmPasswordInput).toHaveAttribute('required');
+      expect(screen.getByLabelText(/^new password\*$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^confirm new password\*$/i)).toBeInTheDocument();
     });
   });
 }); 

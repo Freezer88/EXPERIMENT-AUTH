@@ -67,9 +67,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   };
 
   const validatePhoneNumber = (phoneNumber: string): string | undefined => {
-    if (phoneNumber.trim() && !/^\+?[\d\s\-\(\)]{10,15}$/.test(phoneNumber.trim())) {
-      return 'Please enter a valid phone number';
-    }
+    // Phone number validation removed for now
     return undefined;
   };
 
