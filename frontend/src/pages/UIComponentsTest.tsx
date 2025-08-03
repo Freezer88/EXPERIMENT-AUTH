@@ -60,6 +60,28 @@ const UIComponentsTest: React.FC = () => {
           <p className="text-sm text-primary-500 mt-2">
             Blue for trust, Green for growth, Soft grays for balance
           </p>
+          
+          {/* Navigation Links */}
+          <div className="flex justify-center gap-4 mt-6">
+            <a 
+              href="/login-test" 
+              className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Test Login Form
+            </a>
+            <a 
+              href="/signup-test" 
+              className="inline-flex items-center px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-colors"
+            >
+              Test Signup Form
+            </a>
+            <a 
+              href="/login" 
+              className="inline-flex items-center px-4 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors"
+            >
+              Login Page
+            </a>
+          </div>
         </div>
 
         {/* Cards Section - Prominently Featured */}
